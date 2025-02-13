@@ -1,0 +1,37 @@
+# IDE 配置文件
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# 依赖目录
+node_modules/
+venv/
+env/
+.env/
+
+# 编译输出
+dist/
+build/
+*.pyc
+__pycache__/
+*.class
+
+# 日志文件
+*.log
+logs/
+npm-debug.log*
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 环境配置
+.env
+.env.local
+.env.*.local
+
+# 临时文件
+*.swp
+*.swo
+*~ 
