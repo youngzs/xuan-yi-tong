@@ -6,6 +6,24 @@ import BackHomeButton from '../components/common/BackHomeButton';
 
 interface SettingsFormData extends APIConfig {}
 
+const MODEL_OPTIONS = {
+  deepseek: [
+    { value: 'deepseek-r1', label: 'DeepSeek-R1' },
+    { value: 'deepseek-v3', label: 'DeepSeek-V3' },
+  ],
+  siliconflow: [
+    { value: 'deepseek-ai/DeepSeek-R1', label: 'DeepSeek-R1' },
+    { value: 'deepseek-ai/DeepSeek-V3', label: 'DeepSeek-V3' },
+    { value: 'Pro/deepseek-ai/DeepSeek-R1', label: 'Pro/DeepSeek-R1' },
+    { value: 'Pro/deepseek-ai/DeepSeek-V3', label: 'Pro/DeepSeek-V3' },
+  ],
+};
+
+const MODEL_TYPES = [
+  { value: 'standard', label: '标准版' },
+  { value: 'pro', label: 'Pro版' },
+];
+
 const Settings: React.FC = () => {
   const { register, handleSubmit, setValue, watch } = useForm<SettingsFormData>();
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +36,9 @@ const Settings: React.FC = () => {
     setValue('selectedProvider', config.selectedProvider);
     setValue('deepseekApiKey', config.deepseekApiKey);
     setValue('siliconflowApiKey', config.siliconflowApiKey);
+    setValue('deepseekModel', config.deepseekModel);
+    setValue('deepseekModelType', config.deepseekModelType);
+    setValue('siliconflowModel', config.siliconflowModel);
   }, [setValue]);
 
   const onSubmit = async (data: SettingsFormData) => {
@@ -62,32 +83,67 @@ const Settings: React.FC = () => {
             </div>
 
             {selectedProvider === 'deepseek' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  DeepSeek API密钥
-                </label>
-                <input
-                  type="password"
-                  {...register('deepseekApiKey')}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="输入DeepSeek API密钥"
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    DeepSeek API密钥
+                  </label>
+                  <input
+                    type="password"
+                    {...register('deepseekApiKey')}
+                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="输入DeepSeek API密钥"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    选择模型
+                  </label>
+                  <select
+                    {...register('deepseekModel')}
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  >
+                    {MODEL_OPTIONS.deepseek.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             )}
 
             {selectedProvider === 'siliconflow' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  硅基流动 API密钥
-                </label>
-                <input
-                  type="password"
-                  {...register('siliconflowApiKey')}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="输入硅基流动 API密钥"
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    硅基流动 API密钥
+                  </label>
+                  <input
+                    type="password"
+                    {...register('siliconflowApiKey')}
+                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="输入硅基流动 API密钥"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    选择模型
+                  </label>
+                  <select
+                    {...register('siliconflowModel')}
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  >
+                    {MODEL_OPTIONS.siliconflow.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             )}
+
 
             <div className="flex justify-end">
               <button
@@ -107,4 +163,4 @@ const Settings: React.FC = () => {
   );
 };
 
-export default Settings; 
+export default Settings;

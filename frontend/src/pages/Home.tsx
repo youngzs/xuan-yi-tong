@@ -61,7 +61,7 @@ const Home: React.FC = () => {
           <h2 className="text-3xl font-bold mb-4">探索玄学智慧</h2>
           <p className="text-lg opacity-90 mb-6">传统文化与现代科技的完美结合</p>
           <Link 
-            to="/register" 
+            to="/settings" 
             className="inline-block bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium hover:bg-opacity-90"
           >
             立即开始
@@ -121,4 +121,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home; 
+export default Home;

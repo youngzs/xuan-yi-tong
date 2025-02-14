@@ -1,4 +1,6 @@
 import type { AnalysisHistory } from '../types/analysis';
+import type { ChatMessage } from '../types/chat';
+import type { AnalysisResult } from '../types/analysis';
 
 class HistoryService {
   private readonly STORAGE_KEY = 'analysis_history';

@@ -31,14 +31,27 @@ export const AnalysisHistoryList: React.FC<AnalysisHistoryListProps> = ({
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    {format(new Date(history.timestamp), 'yyyy年MM月dd日 HH:mm')}
+                     {history.timestamp ? format(new Date(history.timestamp), 'yyyy年MM月dd日 HH:mm') : '未知时间'}
                   </p>
                   <p className="text-sm text-gray-500 mt-1">
                     {history.input.birthLocation} · {history.input.gender === 'male' ? '男' : '女'}
                   </p>
                 </div>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                  {history.type === 'bazi' ? '八字' : '其他'}
+                  {(() => {
+                    switch (history.type) {
+                      case 'bazi':
+                        return '八字';
+                      case 'ziweidoushu':
+                        return '紫薇斗数';
+                      case 'cezi':
+                        return '测字';
+                      case 'fengshui':
+                        return '风水';
+                      default:
+                        return '其他';
+                    }
+                  })()}
                 </span>
               </div>
               {history.input.focus && (
@@ -52,4 +65,4 @@ export const AnalysisHistoryList: React.FC<AnalysisHistoryListProps> = ({
       </ul>
     </div>
   );
-}; 
+};

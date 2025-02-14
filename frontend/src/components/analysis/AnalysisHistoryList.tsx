@@ -73,12 +73,16 @@ const AnalysisHistoryList: React.FC<AnalysisHistoryListProps> = ({
 
   const formatHistoryInfo = (input: any) => {
     switch (type) {
-      case 'bazi':
-        return `${input.birthYear}年${input.birthMonth}月${input.birthDay}日 ${input.birthHour}时 · ${input.gender === 'male' ? '男' : '女'}`;
+      case 'bazi': {
+        const birthDate = new Date(input.birthDateTime);
+        return `${birthDate.getFullYear()}年${birthDate.getMonth() + 1}月${birthDate.getDate()}日 ${birthDate.getHours()}时 · ${input.gender === 'male' ? '男' : '女'}`;
+      }
       case 'fengshui':
-        return `${input.location} · ${input.purpose}`;
-      case 'ziweidoushu':
-        return `${input.birthYear}年${input.birthMonth}月${input.birthDay}日${input.birthHour}时 · ${input.gender === 'male' ? '男' : '女'}`;
+        return `${input.layout} · ${input.concern}`;
+      case 'ziweidoushu': {
+        const birthDate = new Date(input.birthDateTime);
+        return `${birthDate.getFullYear()}年${birthDate.getMonth() + 1}月${birthDate.getDate()}日${birthDate.getHours()}时 · ${input.gender === 'male' ? '男' : '女'}`;
+      }
       case 'cezi':
         return `测字：${input.character}`;
       default:
@@ -104,7 +108,7 @@ const AnalysisHistoryList: React.FC<AnalysisHistoryListProps> = ({
       
       <div className="divide-y divide-gray-200">
         {histories.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">
+          <div key="empty" className="p-4 text-center text-gray-500">
             暂无历史记录
           </div>
         ) : (
@@ -133,6 +137,11 @@ const AnalysisHistoryList: React.FC<AnalysisHistoryListProps> = ({
                     {history.input.birthLocation}
                   </p>
                 )}
+                {history.input.focus && (
+                  <p className="mt-1 text-sm text-gray-500">
+                    关注：{history.input.focus}
+                  </p>
+                )}
               </div>
               
               <button
@@ -150,4 +159,4 @@ const AnalysisHistoryList: React.FC<AnalysisHistoryListProps> = ({
   );
 };
 
-export default AnalysisHistoryList; 
+export default AnalysisHistoryList;

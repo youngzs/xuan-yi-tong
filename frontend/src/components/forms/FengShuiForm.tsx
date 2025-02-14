@@ -15,8 +15,42 @@ export interface FengShuiFormData {
   concern: string;
 }
 
+const LAYOUT_SAMPLES = [
+  {
+    text: '三室两厅',
+    detail: '三室两厅，主卧朝南，客厅朝东，面积120平米'
+  },
+  {
+    text: '两室一厅',
+    detail: '两室一厅，主卧朝东，客厅朝南，面积90平米'
+  },
+  {
+    text: '四室两厅',
+    detail: '四室两厅，主卧朝南，客厅朝东南，面积150平米'
+  }
+];
+
+const CONCERN_SAMPLES = [
+  {
+    text: '财运改善',
+    detail: '希望通过风水布局改善家庭财运和事业发展。'
+  },
+  {
+    text: '健康调理',
+    detail: '家人身体欠佳，想通过风水调整改善家居健康环境。'
+  },
+  {
+    text: '感情和谐',
+    detail: '期望改善家庭关系，增进夫妻感情。'
+  },
+  {
+    text: '学业进步',
+    detail: '想为孩子营造良好的学习环境，提升学习效果。'
+  }
+];
+
 const FengShuiForm: React.FC<FengShuiFormProps> = ({ onSubmit, isLoading }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<FengShuiFormData>();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FengShuiFormData>();
 
   const directions = ['东', '南', '西', '北', '东南', '东北', '西南', '西北'];
 
@@ -51,6 +85,7 @@ const FengShuiForm: React.FC<FengShuiFormProps> = ({ onSubmit, isLoading }) => {
           type="text"
           id="floor"
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          placeholder="例如：8层"
           {...register('floor', { required: ERROR_MESSAGES.REQUIRED_FIELD })}
         />
         {errors.floor && (
@@ -83,6 +118,18 @@ const FengShuiForm: React.FC<FengShuiFormProps> = ({ onSubmit, isLoading }) => {
         <label htmlFor="layout" className="block text-sm font-medium text-gray-700">
           房屋格局
         </label>
+        <div className="mt-2 flex flex-wrap gap-2 mb-2">
+          {LAYOUT_SAMPLES.map((sample, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setValue('layout', sample.detail)}
+              className="px-3 py-1 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-full"
+            >
+              {sample.text}
+            </button>
+          ))}
+        </div>
         <textarea
           id="layout"
           rows={3}
@@ -100,6 +147,18 @@ const FengShuiForm: React.FC<FengShuiFormProps> = ({ onSubmit, isLoading }) => {
         <label htmlFor="concern" className="block text-sm font-medium text-gray-700">
           主要困扰
         </label>
+        <div className="mt-2 flex flex-wrap gap-2 mb-2">
+          {CONCERN_SAMPLES.map((sample, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setValue('concern', sample.detail)}
+              className="px-3 py-1 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-full"
+            >
+              {sample.text}
+            </button>
+          ))}
+        </div>
         <textarea
           id="concern"
           rows={3}
@@ -123,4 +182,4 @@ const FengShuiForm: React.FC<FengShuiFormProps> = ({ onSubmit, isLoading }) => {
   );
 };
 
-export default FengShuiForm; 
+export default FengShuiForm;

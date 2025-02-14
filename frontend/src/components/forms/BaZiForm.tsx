@@ -17,6 +17,7 @@ interface BaZiFormProps {
   onSubmit: (data: BaZiFormData) => void;
   isLoading: boolean;
 }
+
 const QUESTION_SAMPLES = [
   {
     text: '近期事业发展方向',
@@ -68,7 +69,8 @@ const BaZiForm: React.FC<BaZiFormProps> = ({ onSubmit, isLoading }) => {
     defaultValues: {
       birthDateTime: new Date(),
       gender: 'male',
-      birthLocation: ''
+      birthLocation: '',
+      focus: ''
     }
   });
 
@@ -110,20 +112,39 @@ const BaZiForm: React.FC<BaZiFormProps> = ({ onSubmit, isLoading }) => {
               disableClock={true}
               calendarIcon={<Calendar className="w-5 h-5" />}
               clearIcon={null}
+              maxDetail="minute"
+              minDate={new Date('1900-01-01')}
+              maxDate={new Date()}
+              dayPlaceholder="日"
+              monthPlaceholder="月"
+              yearPlaceholder="年"
+              hourPlaceholder="时"
+              minutePlaceholder="分"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">性别</label>
-          <div className="mt-1">
-            <select
-              {...register('gender')}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="male">男</option>
-              <option value="female">女</option>
-            </select>
+          <label className="block text-sm font-medium text-gray-700 mb-2">性别</label>
+          <div className="flex space-x-4">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                {...register('gender')}
+                value="male"
+                className="form-radio h-4 w-4 text-indigo-600"
+              />
+              <span className="ml-2">男</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                {...register('gender')}
+                value="female"
+                className="form-radio h-4 w-4 text-indigo-600"
+              />
+              <span className="ml-2">女</span>
+            </label>
           </div>
         </div>
 
@@ -143,7 +164,7 @@ const BaZiForm: React.FC<BaZiFormProps> = ({ onSubmit, isLoading }) => {
           <label className="block text-sm font-medium text-gray-700">
             想要了解的重点
           </label>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2 mb-2">
             {QUESTION_SAMPLES.map((sample, index) => (
               <button
                 key={index}
@@ -155,15 +176,19 @@ const BaZiForm: React.FC<BaZiFormProps> = ({ onSubmit, isLoading }) => {
               </button>
             ))}
           </div>
+          <textarea
+            {...register('focus')}
+            placeholder="请输入您想了解的具体问题..."
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            rows={3}
+          />
         </div>
 
-        <div className="flex justify-end">
+        <div>
           <button
             type="submit"
             disabled={isLoading}
-            className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-              isLoading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
           >
             {isLoading ? '分析中...' : '开始分析'}
           </button>
@@ -173,4 +198,4 @@ const BaZiForm: React.FC<BaZiFormProps> = ({ onSubmit, isLoading }) => {
   );
 };
 
-export default BaZiForm; 
+export default BaZiForm;
