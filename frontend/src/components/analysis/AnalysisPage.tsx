@@ -135,6 +135,39 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
             {streamContent && (
               <div className="mt-6 bg-white shadow rounded-lg p-6 animate-fade-in">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">分析结果</h2>
+                {currentHistory && (
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                    <h3 className="text-md font-medium text-gray-700 mb-2">测算信息</h3>
+                    <div className="text-sm text-gray-600">
+                      {Object.entries(currentHistory.input).map(([key, value]) => {
+                        const fieldMap: Record<string, string> = {
+                          birthDateTime: '出生时间',
+                          gender: '性别',
+                          birthLocation: '出生地点',
+                          focus: '关注重点'
+                        };
+                        const displayValue = key === 'birthDateTime'
+                          ? new Date(value as string).toLocaleString('zh-CN', {
+                              year: 'numeric',
+                              month: 'numeric',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: 'numeric',
+                              hour12: false
+                            }).replace(/\//g, '年').replace(',', '').replace(/:/, '时') + '分'
+                          : key === 'gender'
+                          ? (value === 'male' ? '男' : '女')
+                          : String(value);
+                        return (
+                          <div key={key} className="mb-1">
+                            <span className="font-medium">{fieldMap[key] || key}: </span>
+                            <span>{displayValue}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 <div className="prose max-w-none">
                   {formatResult(streamContent)}
                 </div>
@@ -143,12 +176,26 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
 
             {currentHistory && (
               <div className="mt-8">
+                <h3 className="text-lg font-medium mb-4">对话历史</h3>
+                <div className="space-y-4 mb-6">
+                  {messages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg ${message.role === 'user' ? 'bg-indigo-50' : 'bg-gray-50'}`}
+                    >
+                      <div className="text-sm font-medium mb-1">
+                        {message.role === 'user' ? '您的问题' : '分析回答'}
+                      </div>
+                      <div className="text-gray-700">{message.content}</div>
+                    </div>
+                  ))}
+                </div>
                 <h3 className="text-lg font-medium">继续询问</h3>
                 <div className="mt-4">
                   <textarea
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     rows={3}
-                    placeholder="输入你的问题..."
+                    placeholder="基于以上分析结果和对话记录，您可以继续提问..."
                     value={followUpQuestion}
                     onChange={(e) => setFollowUpQuestion(e.target.value)}
                   />
