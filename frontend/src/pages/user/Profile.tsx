@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, MapPin, Phone, Clock } from 'lucide-react';
-import { UserProfile } from '../../types/user';
 import { useAuthStore } from '../../stores/authStore';
 import { userService } from '../../services/localStorage';
 
@@ -9,7 +8,7 @@ const Profile: React.FC = () => {
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'profile' | 'history'>('profile');
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) throw new Error('未登录');
@@ -130,4 +129,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile; 
+export default Profile;

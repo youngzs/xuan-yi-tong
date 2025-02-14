@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Calendar } from 'lucide-react';
 import DateTimePicker from 'react-datetime-picker';
+import type { DateTimePickerProps } from 'react-datetime-picker';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
@@ -42,7 +43,7 @@ const PRESET_EXAMPLES = [
     label: '90年代男性案例',
     data: {
       birthDateTime: new Date('1990-06-15T13:30:00'),
-      gender: 'male',
+      gender: 'male' as const,
       birthLocation: '北京市朝阳区'
     }
   },
@@ -50,7 +51,7 @@ const PRESET_EXAMPLES = [
     label: '80年代女性案例',
     data: {
       birthDateTime: new Date('1985-08-23T09:15:00'),
-      gender: 'female',
+      gender: 'female' as const,
       birthLocation: '上海市浦东新区'
     }
   },
@@ -58,7 +59,7 @@ const PRESET_EXAMPLES = [
     label: '70年代男性案例',
     data: {
       birthDateTime: new Date('1978-11-05T22:45:00'),
-      gender: 'male',
+      gender: 'male' as const,
       birthLocation: '广州市天河区'
     }
   }
@@ -73,6 +74,12 @@ const BaZiForm: React.FC<BaZiFormProps> = ({ onSubmit, isLoading }) => {
       focus: ''
     }
   });
+
+  const handleDateChange: DateTimePickerProps['onChange'] = (value) => {
+    if (value instanceof Date) {
+      setValue('birthDateTime', value);
+    }
+  };
 
   const handlePresetClick = (preset: typeof PRESET_EXAMPLES[0]) => {
     setValue('birthDateTime', preset.data.birthDateTime);
@@ -105,7 +112,7 @@ const BaZiForm: React.FC<BaZiFormProps> = ({ onSubmit, isLoading }) => {
           </label>
           <div className="mt-1">
             <DateTimePicker
-              onChange={(date) => setValue('birthDateTime', date)}
+              onChange={handleDateChange}
               value={watch('birthDateTime')}
               className="w-full"
               format="y-MM-dd HH:mm"

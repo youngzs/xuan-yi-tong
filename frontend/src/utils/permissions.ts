@@ -1,42 +1,42 @@
 export const Permissions = {
   // 用户权限
-  USER_VIEW: 'user:view',
-  USER_EDIT: 'user:edit',
+  USER_VIEW: 'USER_VIEW',
+  USER_EDIT: 'USER_EDIT',
   
   // 计算结果权限
-  CALC_CREATE: 'calculation:create',
-  CALC_VIEW: 'calculation:view',
-  CALC_EDIT: 'calculation:edit',
-  CALC_DELETE: 'calculation:delete',
+  CALC_CREATE: 'CALC_CREATE',
+  CALC_VIEW: 'CALC_VIEW',
+  CALC_EDIT: 'CALC_EDIT',
+  CALC_DELETE: 'CALC_DELETE',
   
   // VIP 功能权限
-  VIP_FEATURES: 'vip:features',
+  VIP_FEATURES: 'VIP_FEATURES',
   
   // 管理员权限
-  ADMIN_ACCESS: 'admin:access',
+  ADMIN_ACCESS: 'ADMIN_ACCESS',
 } as const;
 
 export type Permission = keyof typeof Permissions;
 
 const RolePermissions: Record<string, Permission[]> = {
   user: [
-    'user:view',
-    'calculation:create',
-    'calculation:view',
-    'calculation:edit',
-    'calculation:delete',
+    'USER_VIEW',
+    'CALC_CREATE',
+    'CALC_VIEW',
+    'CALC_EDIT',
+    'CALC_DELETE',
   ],
   vip: [
-    'user:view',
-    'calculation:create',
-    'calculation:view',
-    'calculation:edit',
-    'calculation:delete',
-    'vip:features',
+    'USER_VIEW',
+    'CALC_CREATE',
+    'CALC_VIEW',
+    'CALC_EDIT',
+    'CALC_DELETE',
+    'VIP_FEATURES',
   ],
-  admin: Object.values(Permissions),
+  admin: Object.values(Permissions) as Permission[],
 };
 
 export const hasPermission = (role: string, permission: Permission): boolean => {
   return RolePermissions[role]?.includes(permission) ?? false;
-}; 
+};

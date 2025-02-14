@@ -2,7 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Calendar } from 'lucide-react';
 import DateTimePicker from 'react-datetime-picker';
-import { FORM_LABELS, ERROR_MESSAGES } from '../../config/prompts';
+import type { DateTimePickerProps } from 'react-datetime-picker';
+import { ERROR_MESSAGES } from '../../config/prompts';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
@@ -14,7 +15,7 @@ interface ZiWeiDouShuFormProps {
 
 export interface ZiWeiDouShuFormData {
   birthDateTime: Date;
-  gender: string;
+  gender: 'male' | 'female';
   focus: string;
 }
 
@@ -45,21 +46,27 @@ const ZiWeiDouShuForm: React.FC<ZiWeiDouShuFormProps> = ({ onSubmit, isLoading }
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ZiWeiDouShuFormData>({
     defaultValues: {
       birthDateTime: new Date(),
-      gender: '',
+      gender: 'male',
       focus: ''
     }
   });
+
+  const handleDateChange: DateTimePickerProps['onChange'] = (value) => {
+    if (value instanceof Date) {
+      setValue('birthDateTime', value);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* 出生日期时间 */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          {FORM_LABELS.BIRTH_TIME}
+          出生日期时间
         </label>
         <div className="mt-1">
           <DateTimePicker
-            onChange={(date) => setValue('birthDateTime', date)}
+            onChange={handleDateChange}
             value={watch('birthDateTime')}
             className="w-full"
             format="y-MM-dd HH:mm"
@@ -81,13 +88,13 @@ const ZiWeiDouShuForm: React.FC<ZiWeiDouShuFormProps> = ({ onSubmit, isLoading }
       {/* 性别 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          {FORM_LABELS.GENDER}
+          性别
         </label>
         <div className="flex space-x-4">
           <label className="inline-flex items-center">
             <input
               type="radio"
-              value="男"
+              value="male"
               {...register('gender', { required: ERROR_MESSAGES.REQUIRED_FIELD })}
               className="form-radio h-4 w-4 text-indigo-600"
             />
@@ -96,7 +103,7 @@ const ZiWeiDouShuForm: React.FC<ZiWeiDouShuFormProps> = ({ onSubmit, isLoading }
           <label className="inline-flex items-center">
             <input
               type="radio"
-              value="女"
+              value="female"
               {...register('gender', { required: ERROR_MESSAGES.REQUIRED_FIELD })}
               className="form-radio h-4 w-4 text-indigo-600"
             />

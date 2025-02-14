@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useAuthStore } from '../../stores/authStore';
 import { chatService } from '../../services/api';
 import { historyService } from '../../services/historyService';
 import AnalysisHistoryList from './AnalysisHistoryList';
-import type { AnalysisResult, AnalysisHistory } from '../../types/analysis';
+import type { AnalysisHistory } from '../../types/analysis';
 import type { ChatMessage } from '../../types/chat';
 import { useToast } from '../../hooks/useToast';
 
@@ -20,18 +19,17 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
   Form,
   formatResult
 }) => {
-  const { user } = useAuthStore();
   const [histories, setHistories] = useState<AnalysisHistory[]>([]);
   const [currentHistory, setCurrentHistory] = useState<AnalysisHistory | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [streamContent, setStreamContent] = useState('');
+  const [streamContent, setStreamContent] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const { showToast } = useToast();
 
   useEffect(() => {
     refreshHistories();
-  }, []);
+  }, [method]);
 
   const refreshHistories = () => {
     const savedHistories = historyService.getHistory(method);
@@ -73,28 +71,27 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
   const handleHistorySelect = (history: AnalysisHistory) => {
     setCurrentHistory(history);
     setMessages(history.messages);
-    setStreamContent(history.result || '');
-    if (history.input && Form.defaultProps?.onDataLoad) {
-      Form.defaultProps.onDataLoad(history.input);
+    setStreamContent(history.result?.toString() || '');
+    if (history.input) {
+      Form.defaultProps?.onDataLoad?.(history.input);
     }
   };
 
   const handleFollowUpQuestion = async (question: string) => {
-    if (!currentHistory) return;
+    if (!currentHistory || !question.trim()) return;
 
-    const newMessages = [
+    const newMessages: ChatMessage[] = [
       ...messages,
-      { role: 'user', content: question }
+      { role: 'user' as const, content: question }
     ];
 
     setIsAnalyzing(true);
     setStreamContent('');
+    setFollowUpQuestion('');
 
     try {
       await chatService.chatStream(newMessages, {
-        onContent: (content) => {
-          setStreamContent(content);
-        },
+        onContent: setStreamContent,
         onComplete: (result) => {
           setMessages(newMessages);
           historyService.saveAnalysis(

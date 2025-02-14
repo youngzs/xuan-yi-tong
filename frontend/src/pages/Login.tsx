@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { userService } from '../services/localStorage';
 import BackHomeButton from '../components/common/BackHomeButton';
 
 const Login: React.FC = () => {
@@ -126,4 +125,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login; 
+export default Login;

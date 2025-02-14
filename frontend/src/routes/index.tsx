@@ -1,5 +1,5 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import React, { lazy, Suspense } from 'react';
+import { createBrowserRouter } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import Home from '../pages/Home';
@@ -118,4 +118,4 @@ export const router = createBrowserRouter([
     path: '*',
     element: <NotFound />,
   },
-]); 
+]);

@@ -1,93 +1,97 @@
+import { v4 as uuidv4 } from 'uuid';
 import type { AnalysisHistory } from '../types/analysis';
-import type { ChatMessage } from '../types/chat';
-import type { AnalysisResult } from '../types/analysis';
 
-class HistoryService {
-  private readonly STORAGE_KEY = 'analysis_history';
+const HISTORY_KEY = 'analysis_history';
 
-  getHistory(type?: string): AnalysisHistory[] {
-    const histories = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
-    if (type) {
-      return histories.filter((history: AnalysisHistory) => history.type === type);
-    }
-    return histories;
-  }
+interface HistoryStore {
+  [key: string]: AnalysisHistory[];
+}
 
-  saveAnalysis(type: string, input: any, messages: any[], result: any): AnalysisHistory {
-    const histories = this.getHistory();
-    
-    // 尝试解析结果字符串为 JSON（如果是字符串的话）
-    let parsedResult = result;
-    if (typeof result === 'string') {
-      try {
-        parsedResult = JSON.parse(result);
-      } catch (e) {
-        // 如果解析失败，保持原样
-        parsedResult = result;
+export const historyService = {
+  getHistory(type: 'bazi' | 'ziweidoushu' | 'fengshui' | 'cezi'): AnalysisHistory[] {
+    try {
+      const store = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
+      
+      // 处理旧版本数据格式
+      if (Array.isArray(store)) {
+        // 如果是数组格式，说明是旧版本数据
+        const oldRecords = store as AnalysisHistory[];
+        // 将旧数据按类型分类
+        const newStore: HistoryStore = {};
+        oldRecords.forEach(record => {
+          if (!newStore[record.type]) {
+            newStore[record.type] = [];
+          }
+          newStore[record.type].push(record);
+        });
+        // 保存转换后的新格式数据
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(newStore));
+        return newStore[type] || [];
       }
+      
+      return (store as HistoryStore)[type] || [];
+    } catch {
+      return [];
     }
-
-    const newHistory: AnalysisHistory = {
-      id: Date.now().toString(),
+  },
+  saveAnalysis(
+    type: 'bazi' | 'ziweidoushu' | 'fengshui' | 'cezi',
+    input: any,
+    messages: any[],
+    result: any
+  ): AnalysisHistory {
+    const history: AnalysisHistory = {
+      id: uuidv4(),
       type,
       timestamp: new Date().toISOString(),
       input,
       messages,
-      result: parsedResult
+      result
     };
 
-    histories.unshift(newHistory);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(histories.slice(0, 50))); // 只保留最近50条记录
+    try {
+      const store = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}') as HistoryStore;
+      store[type] = [history, ...(store[type] || [])];
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(store));
+    } catch (error) {
+      console.error('保存历史记录失败:', error);
+    }
 
-    return newHistory;
-  }
+    return history;
+  },
 
-  getAnalysisById(id: string): AnalysisHistory | null {
-    const history = this.getHistory();
-    return history.find(entry => entry.id === id) || null;
-  }
-
-  // 添加删除单条记录的方法
   deleteAnalysis(id: string): boolean {
-    const histories = this.getHistory();
-    const filteredHistories = histories.filter(entry => entry.id !== id);
-    
-    if (filteredHistories.length === histories.length) {
-      return false; // 没有找到要删除的记录
+    try {
+      const store = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}') as HistoryStore;
+      let deleted = false;
+
+      Object.keys(store).forEach(type => {
+        const index = store[type].findIndex(h => h.id === id);
+        if (index !== -1) {
+          store[type].splice(index, 1);
+          deleted = true;
+        }
+      });
+
+      if (deleted) {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(store));
+      }
+
+      return deleted;
+    } catch {
+      return false;
     }
+  },
 
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredHistories));
-    return true;
-  }
-
-  // 添加删除多条记录的方法
-  deleteMultipleAnalyses(ids: string[]): number {
-    const histories = this.getHistory();
-    const filteredHistories = histories.filter(entry => !ids.includes(entry.id));
-    
-    const deletedCount = histories.length - filteredHistories.length;
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredHistories));
-    
-    return deletedCount;
-  }
-
-  // 添加清空历史记录的方法
-  clearHistory(type?: string): number {
-    const histories = this.getHistory();
-    
-    if (type) {
-      // 如果指定了类型，只删除该类型的记录
-      const filteredHistories = histories.filter(entry => entry.type !== type);
-      const deletedCount = histories.length - filteredHistories.length;
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredHistories));
-      return deletedCount;
-    } else {
-      // 没有指定类型，清空所有记录
-      const deletedCount = histories.length;
-      localStorage.setItem(this.STORAGE_KEY, '[]');
-      return deletedCount;
+  clearHistory(type: 'bazi' | 'ziweidoushu' | 'fengshui' | 'cezi'): number {
+    try {
+      const store = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}') as HistoryStore;
+      const count = store[type]?.length || 0;
+      store[type] = [];
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(store));
+      return count;
+    } catch {
+      return 0;
     }
   }
-}
-
-export const historyService = new HistoryService(); 
+};

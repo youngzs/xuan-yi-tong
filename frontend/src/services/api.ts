@@ -1,5 +1,4 @@
 import { apiConfigService } from './apiConfig';
-import axios from 'axios';
 import type { ChatMessage } from '../types/chat';
 import type { AnalysisResult } from '../types/analysis';
 import { TEST } from '../config/prompts';
@@ -34,10 +33,22 @@ interface StreamData {
   }>;
 }
 
+interface AnalysisPrompts {
+  system: string;
+  user?: (data: any) => string;
+  questionPrompt?: string;
+}
+
+interface AnalysisPromptsConfig {
+  [key: string]: AnalysisPrompts;
+}
+
+type AnalysisMethod = 'bazi' | 'ziweidoushu' | 'fengshui' | 'cezi';
+
 // 修改 buildPromptMessages 函数为异步函数
-async function buildPromptMessages(method: string, data: any): Promise<ChatMessage[]> {
+async function buildPromptMessages(method: AnalysisMethod, data: any): Promise<ChatMessage[]> {
   const { ANALYSIS_PROMPTS } = await getPrompts();
-  const prompts = ANALYSIS_PROMPTS[method];
+  const prompts = (ANALYSIS_PROMPTS as AnalysisPromptsConfig)[method];
   if (!prompts) {
     throw new Error(`未找到${method}的提示语配置`);
   }
@@ -181,25 +192,7 @@ export const chatService = {
         }
         
         console.error('无法解析返回的 JSON:', content);
-        return {
-          basicInfo: {
-            birthData: "解析失败",
-            wuxing: "解析失败",
-            rizhu: "解析失败"
-          },
-          analysis: {
-            personality: content,
-            career: "解析失败",
-            wealth: "解析失败",
-            relationships: "解析失败",
-            health: "解析失败"
-          },
-          guidance: {
-            shortTerm: "解析失败",
-            longTerm: "解析失败",
-            suggestions: ["解析失败"]
-          }
-        };
+        return content;
       }
     } catch (error) {
       console.error('硅基流动 API 调用错误:', error);
@@ -210,6 +203,7 @@ export const chatService = {
   async chatStream(messages: ChatMessage[], callbacks: StreamHandler): Promise<void> {
     const config = apiConfigService.getConfig();
     const provider = config.selectedProvider;
+    const apiKey = provider === 'deepseek' ? config.deepseekApiKey : config.siliconflowApiKey;
     
     try {
       const response = await fetch(
@@ -220,7 +214,7 @@ export const chatService = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config[provider + 'ApiKey']}`,
+            'Authorization': `Bearer ${apiKey}`,
             'Accept': 'application/json',
           },
           body: JSON.stringify({
@@ -238,8 +232,6 @@ export const chatService = {
       }
 
       let accumulatedContent = '';
-      let currentJsonString = '';
-      let isInCodeBlock = false;
       
       // 读取流数据
       const reader = response.body!.getReader();
@@ -272,10 +264,8 @@ export const chatService = {
               }
             } catch (error) {
               console.error('解析流数据失败:', error);
-              if (!isInCodeBlock) {
-                accumulatedContent += chunk;
-                callbacks.onContent(accumulatedContent);
-              }
+              accumulatedContent += chunk;
+              callbacks.onContent(accumulatedContent);
             }
           }
         }
@@ -308,13 +298,11 @@ export const chatService = {
     }
   },
 
-  async analyzeWithMethod(method: string, data: any): Promise<AnalysisResult> {
+  async analyzeWithMethod(method: AnalysisMethod, data: any): Promise<AnalysisResult> {
     try {
       const messages = await buildPromptMessages(method, data);
       if (data.stream) {
         return new Promise((resolve, reject) => {
-          let finalResult: AnalysisResult;
-          
           this.chatStream(messages, {
             onContent: (content: string) => {
               if (data.onContent) {
@@ -322,7 +310,6 @@ export const chatService = {
               }
             },
             onComplete: (result: AnalysisResult) => {
-              finalResult = result;
               // 保存分析历史
               const history = historyService.saveAnalysis(
                 method,

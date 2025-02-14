@@ -1,20 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import BackHomeButton from '../components/common/BackHomeButton';
 
 const NotFound: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <BackHomeButton />
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-8">页面不存在</p>
-        <p className="text-gray-500">
-          抱歉，您访问的页面不存在或已被移除。
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            404 - 页面未找到
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            抱歉，您访问的页面不存在。
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default NotFound; 
+export default NotFound;

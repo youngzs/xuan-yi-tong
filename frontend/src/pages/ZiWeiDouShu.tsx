@@ -22,7 +22,7 @@ const formatZiWeiResult = (content: string) => {
             {Object.entries(result.palaceAnalysis).map(([palace, analysis]) => (
               <div key={palace}>
                 <p className="font-medium">{palace}宫：</p>
-                <p className="ml-4">{analysis}</p>
+                <p className="ml-4">{analysis as string}</p>
               </div>
             ))}
           </div>
@@ -53,4 +53,4 @@ const ZiWeiDouShu: React.FC = () => {
   );
 };
 
-export default ZiWeiDouShu; 
+export default ZiWeiDouShu;

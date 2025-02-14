@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ANALYSIS_PROMPTS } from '../config/prompts';
-import FengShuiForm from '../components/forms/FengShuiForm';
-import { useAuthStore } from '../stores/authStore';
-import { chatService } from '../services/api';
-import { historyService } from '../services/historyService';
-import AnalysisHistoryList from '../components/analysis/AnalysisHistoryList';
-import type { AnalysisHistory } from '../types/analysis';
-import type { ChatMessage } from '../types/chat';
+import React from 'react';
 import { AnalysisPage } from '../components/analysis/AnalysisPage';
+import FengShuiForm from '../components/forms/FengShuiForm';
 
 const formatFengShuiResult = (content: string) => {
   try {
@@ -100,4 +93,4 @@ const FengShui: React.FC = () => {
   );
 };
 
-export default FengShui; 
+export default FengShui;

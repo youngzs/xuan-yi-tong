@@ -1,15 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { ANALYSIS_PROMPTS } from '../config/prompts';
+import React from 'react';
 import BaZiForm from '../components/forms/BaZiForm';
-// 移除未使用的 calculationService 导入
-import { useAuthStore } from '../stores/authStore';
-import { chatService } from '../services/api';
-import { historyService } from '../services/historyService';
-import AnalysisHistoryList from '../components/analysis/AnalysisHistoryList';
-import type { AnalysisResult, AnalysisHistory } from '../types/analysis';
-import type { ChatMessage } from '../types/chat';
-import { useToast } from '../hooks/useToast';
 import { AnalysisPage } from '../components/analysis/AnalysisPage';
 
 const formatBaZiResult = (content: string) => {
@@ -33,7 +23,7 @@ const formatBaZiResult = (content: string) => {
           <h3 className="text-lg font-medium mb-2">命理分析</h3>
           <div className="space-y-2">
             <p><span className="font-medium">性格特点：</span>{result.analysis.personality}</p>
-            <p><span className="font-medium">的事业发展：</span>{result.analysis.career}</p>
+            <p><span className="font-medium">事业发展：</span>{result.analysis.career}</p>
             <p><span className="font-medium">财运分析：</span>{result.analysis.wealth}</p>
             <p><span className="font-medium">人际关系：</span>{result.analysis.relationships}</p>
             <p><span className="font-medium">健康状况：</span>{result.analysis.health}</p>

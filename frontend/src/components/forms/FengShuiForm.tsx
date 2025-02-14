@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { FORM_LABELS, ERROR_MESSAGES } from '../../config/prompts';
+import { ERROR_MESSAGES } from '../../config/prompts';
 
 interface FengShuiFormProps {
   onSubmit: (data: FengShuiFormData) => void;

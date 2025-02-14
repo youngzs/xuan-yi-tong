@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useToast } from '../hooks/useToast';
 import { apiConfigService, APIConfig } from '../services/apiConfig';
-import BackHomeButton from '../components/common/BackHomeButton';
 
 interface SettingsFormData extends APIConfig {}
 
@@ -19,21 +18,14 @@ const MODEL_OPTIONS = {
   ],
 };
 
-const MODEL_TYPES = [
-  { value: 'standard', label: '标准版' },
-  { value: 'pro', label: 'Pro版' },
-];
-
 const Settings: React.FC = () => {
   const { register, handleSubmit, setValue, watch } = useForm<SettingsFormData>();
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
   const selectedProvider = watch('selectedProvider');
 
-  // 加载已保存的设置
   useEffect(() => {
     const config = apiConfigService.getConfig();
-    // 设置默认提供商为硅基流动
     setValue('selectedProvider', config.selectedProvider || 'siliconflow');
     setValue('deepseekApiKey', config.deepseekApiKey);
     setValue('siliconflowApiKey', config.siliconflowApiKey);
@@ -147,7 +139,6 @@ const Settings: React.FC = () => {
                 </div>
               </div>
             )}
-
 
             <div className="flex justify-end">
               <button
