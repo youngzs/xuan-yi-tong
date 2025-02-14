@@ -33,7 +33,8 @@ const Settings: React.FC = () => {
   // 加载已保存的设置
   useEffect(() => {
     const config = apiConfigService.getConfig();
-    setValue('selectedProvider', config.selectedProvider);
+    // 设置默认提供商为硅基流动
+    setValue('selectedProvider', config.selectedProvider || 'siliconflow');
     setValue('deepseekApiKey', config.deepseekApiKey);
     setValue('siliconflowApiKey', config.siliconflowApiKey);
     setValue('deepseekModel', config.deepseekModel);
@@ -64,7 +65,10 @@ const Settings: React.FC = () => {
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900">API设置</h2>
             <p className="mt-1 text-sm text-gray-500">
-              配置模型提供商的API密钥
+              配置模型提供商的API密钥。如需获取硅基流动API密钥，请访问：
+              <a href="https://cloud.siliconflow.cn/i/Wh0VcMbV" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-500">
+                注册硅基流动账号
+              </a>
             </p>
           </div>
 
